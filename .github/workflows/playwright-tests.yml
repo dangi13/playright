@@ -1,0 +1,28 @@
+name: Build Playwright tests image
+on:
+  push:
+    tags:
+      - '*'
+    branches: [ "master" ]
+  pull_request:
+     branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v1
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v1
+        with:
+           node-version: 16.x
+      - name: package docker
+        run: |
+          VERSION=$(date +%s)
+          docker login docker.pkg.github.com --username dangi13 --password ${{ secrets.GITHUB_TOKEN}}
+          docker build . --file Dockerfile --tag docker.pkg.github.com/dangi13/playright/playright-tests:${VERSION} --build-arg username=dangi13 --build-arg password=${{ secrets.GITHUB_TOKEN}}
+          docker push docker.pkg.github.com/dangi13/playwright/playright-tests:${VERSION}  
+        env:
+          CI: true
