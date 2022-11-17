@@ -41,6 +41,7 @@ jobs:
           name: Allure Report
           path: |
             allure-results/
+            playwright-report
       - name: Publish Test Report
         uses: EnricoMi/publish-unit-test-result-action/composite@v1
         if: always()
